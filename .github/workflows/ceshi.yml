@@ -1,0 +1,41 @@
+name: "Manual Build Debug APK"
+
+on:
+  workflow_dispatch: # 手动触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. 设置 Java 17
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: "17"
+          cache: 'gradle'
+
+      # 2. 设置 Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.x'
+          cache: true
+
+      # 3. 获取依赖
+      - name: pub get
+        run: flutter pub get
+
+      # 4. 直接构建 Debug APK (自动带有 Debug 签名)
+      # 这种模式生成的 APK 体积稍大，但完全不需要配置 key.properties
+      - name: Build Debug APK
+        run: flutter build apk --debug
+
+      # 5. 上传 APK
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
