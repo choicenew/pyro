@@ -4,10 +4,10 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_browser/main.dart';
+import 'package:pyro/main.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_browser/models/webview_model.dart';
-import 'package:flutter_browser/webview_tab.dart';
+import 'package:pyro/models/webview_model.dart';
+import 'package:pyro/webview_tab.dart';
 import 'package:uuid/uuid.dart';
 import 'package:collection/collection.dart';
 

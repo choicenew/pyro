@@ -3,12 +3,12 @@ import 'dart:async';
 // import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_browser/custom_image.dart';
-import 'package:flutter_browser/tab_viewer.dart';
-import 'package:flutter_browser/app_bar/browser_app_bar.dart';
-import 'package:flutter_browser/models/webview_model.dart';
-import 'package:flutter_browser/util.dart';
-import 'package:flutter_browser/webview_tab.dart';
+import 'package:pyro/custom_image.dart';
+import 'package:pyro/tab_viewer.dart';
+import 'package:pyro/app_bar/browser_app_bar.dart';
+import 'package:pyro/models/webview_model.dart';
+import 'package:pyro/util.dart';
+import 'package:pyro/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 
@@ -26,7 +26,7 @@ class Browser extends StatefulWidget {
 
 class _BrowserState extends State<Browser> with SingleTickerProviderStateMixin {
   static const platform =
-      MethodChannel('com.pichillilorenzo.flutter_browser.intent_data');
+      MethodChannel('com.pichillilorenzo.pyro.intent_data');
 
   var _isRestored = false;
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/util.dart';
-import 'package:flutter_browser/webview_tab.dart';
+import 'package:pyro/util.dart';
+import 'package:pyro/webview_tab.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 

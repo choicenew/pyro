@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/models/browser_model.dart';
-import 'package:flutter_browser/models/webview_model.dart';
-import 'package:flutter_browser/util.dart';
-import 'package:flutter_browser/webview_tab.dart';
+import 'package:pyro/models/browser_model.dart';
+import 'package:pyro/models/webview_model.dart';
+import 'package:pyro/util.dart';
+import 'package:pyro/webview_tab.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
 
-import 'animated_flutter_browser_logo.dart';
+import 'animated_pyro_logo.dart';
 import 'models/window_model.dart';
 
 class ProjectInfoPopup extends StatefulWidget {
@@ -82,7 +82,7 @@ class _ProjectInfoPopupState extends State<ProjectInfoPopup> {
           text: const TextSpan(children: [
             TextSpan(text: "Github: ", style: TextStyle(color: Colors.black)),
             TextSpan(
-                text: "pichillilorenzo/flutter_browser_app",
+                text: "pichillilorenzo/pyro_app",
                 style: TextStyle(color: Colors.blue))
           ]),
         ),
@@ -92,7 +92,7 @@ class _ProjectInfoPopupState extends State<ProjectInfoPopup> {
             key: GlobalKey(),
             webViewModel: WebViewModel(
                 url: WebUri(
-                    "https://github.com/pichillilorenzo/flutter_browser_app")),
+                    "https://github.com/pichillilorenzo/pyro_app")),
           ));
           Navigator.pop(context);
         },

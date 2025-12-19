@@ -1,4 +1,4 @@
-import 'package:flutter_browser/util.dart';
+import 'package:pyro/util.dart';
 
 class PopupMenuActions {
   // ignore: constant_identifier_names

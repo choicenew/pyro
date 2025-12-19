@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/app_bar/custom_app_bar_wrapper.dart';
-import 'package:flutter_browser/pages/developers/javascript_console.dart';
-import 'package:flutter_browser/pages/developers/network_info.dart';
-import 'package:flutter_browser/pages/developers/storage_manager.dart';
+import 'package:pyro/app_bar/custom_app_bar_wrapper.dart';
+import 'package:pyro/pages/developers/javascript_console.dart';
+import 'package:pyro/pages/developers/network_info.dart';
+import 'package:pyro/pages/developers/storage_manager.dart';
 
 class DevelopersPage extends StatefulWidget {
   const DevelopersPage({super.key});

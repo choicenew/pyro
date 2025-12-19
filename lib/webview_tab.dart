@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_browser/main.dart';
-import 'package:flutter_browser/models/webview_model.dart';
-import 'package:flutter_browser/util.dart';
+import 'package:pyro/main.dart';
+import 'package:pyro/models/webview_model.dart';
+import 'package:pyro/util.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';

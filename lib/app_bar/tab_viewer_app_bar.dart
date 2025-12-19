@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_browser/models/browser_model.dart';
-import 'package:flutter_browser/models/webview_model.dart';
-import 'package:flutter_browser/pages/settings/main.dart';
-import 'package:flutter_browser/webview_tab.dart';
+import 'package:pyro/models/browser_model.dart';
+import 'package:pyro/models/webview_model.dart';
+import 'package:pyro/pages/settings/main.dart';
+import 'package:pyro/webview_tab.dart';
 import 'package:flutter_font_icons/flutter_font_icons.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:provider/provider.dart';
