@@ -22,13 +22,17 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+// 尝试加载 key.properties
 def keystoreProperties = new Properties()
 def keystorePropertiesFile = rootProject.file('key.properties')
-if (keystorePropertiesFile.exists()) {
+def hasKeyFile = keystorePropertiesFile.exists()
+if (hasKeyFile) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 }
 
 android {
+    // 使用 com.sun.pyro 作为命名空间
+    namespace 'com.sun.pyro'
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -48,30 +52,44 @@ android {
     defaultConfig {
         applicationId "com.sun.pyro"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 36
+        targetSdkVersion 36 // 匹配你之前的设置
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
     }
 
     signingConfigs {
+        // 定义正式签名配置
         release {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : null
-            storePassword keystoreProperties['storePassword']
+            if (hasKeyFile && keystoreProperties['storeFile'] != null) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // 自动降级逻辑：
+            // 如果存在签名文件且路径不为空，则使用正式签名，否则强制使用 debug 签名
+            if (hasKeyFile && keystoreProperties['storeFile'] != null) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
+            }
+
             ndk {
                 debugSymbolLevel 'FULL'
             }
         }
+
+        debug {
+            signingConfig signingConfigs.debug
+        }
     }
-    namespace 'com.sun.pyro'
+
     lint {
         disable 'InvalidPackage'
     }
@@ -83,7 +101,5 @@ flutter {
 
 dependencies {
     implementation 'com.google.android.material:material:1.12.0'
-
-    def multidex_version = "2.0.1"
-    implementation "androidx.multidex:multidex:$multidex_version"
+    implementation "androidx.multidex:multidex:2.0.1"
 }
