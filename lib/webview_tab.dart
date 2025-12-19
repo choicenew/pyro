@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:pyro/services/sni_network_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'javascript_console_result.dart';
@@ -177,7 +179,6 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
     initialSettings.horizontalScrollbarThumbColor =
         const Color.fromRGBO(0, 0, 0, 0.5);
 
-    initialSettings.allowsLinkPreview = false;
     initialSettings.isFraudulentWebsiteWarningEnabled = true;
     initialSettings.disableLongPressContextMenuOnLinks = true;
     initialSettings.allowingReadAccessTo = WebUri('file://$WEB_ARCHIVE_DIR/');
@@ -185,6 +186,11 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
     return InAppWebView(
       keepAlive: widget.webViewModel.keepAlive,
       webViewEnvironment: webViewEnvironment,
+      initialUserScripts: UnmodifiableListView<UserScript>([
+        UserScript(
+            source: SniNetworkService().interceptorJs,
+            injectionTime: UserScriptInjectionTime.AT_DOCUMENT_START),
+      ]),
       initialUrlRequest: URLRequest(url: widget.webViewModel.url),
       initialSettings: initialSettings,
       windowId: widget.webViewModel.windowId,
@@ -203,6 +209,13 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
         if (Util.isAndroid()) {
           controller.startSafeBrowsing();
         }
+
+        controller.addJavaScriptHandler(
+            handlerName: 'sealerFetch',
+            callback: (args) {
+              return SniNetworkService()
+                  .handleJsFetch(args[0].cast<String, dynamic>());
+            });
 
         widget.webViewModel.settings = await controller.getSettings();
 
@@ -367,16 +380,32 @@ class _WebViewTabState extends State<WebViewTab> with WidgetsBindingObserver {
       shouldOverrideUrlLoading: (controller, navigationAction) async {
         var url = navigationAction.request.url;
 
-        if (url != null &&
-            !["http", "https", "file", "chrome", "data", "javascript", "about"]
-                .contains(url.scheme)) {
-          if (await canLaunchUrl(url)) {
-            // Launch the App
-            await launchUrl(
-              url,
-            );
-            // and cancel the request
+        if (url != null) {
+          // 1. SniNetwork Interception
+          if (SniNetworkService().shouldIntercept(url)) {
+            await SniNetworkService()
+                .handleNavigation(controller, navigationAction.request);
             return NavigationActionPolicy.CANCEL;
+          }
+
+          // 2. Original Logic
+          if (![
+            "http",
+            "https",
+            "file",
+            "chrome",
+            "data",
+            "javascript",
+            "about"
+          ].contains(url.scheme)) {
+            if (await canLaunchUrl(url)) {
+              // Launch the App
+              await launchUrl(
+                url,
+              );
+              // and cancel the request
+              return NavigationActionPolicy.CANCEL;
+            }
           }
         }
 

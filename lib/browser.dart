@@ -25,8 +25,7 @@ class Browser extends StatefulWidget {
 }
 
 class _BrowserState extends State<Browser> with SingleTickerProviderStateMixin {
-  static const platform =
-      MethodChannel('com.pichillilorenzo.pyro.intent_data');
+  static const platform = MethodChannel('com.sun.pyro.intent_data');
 
   var _isRestored = false;
 
@@ -74,7 +73,8 @@ class _BrowserState extends State<Browser> with SingleTickerProviderStateMixin {
   }
 
   Widget _buildBrowser() {
-    final currentWebViewModel = Provider.of<WebViewModel>(context, listen: true);
+    final currentWebViewModel =
+        Provider.of<WebViewModel>(context, listen: true);
     final browserModel = Provider.of<BrowserModel>(context, listen: true);
     final windowModel = Provider.of<WindowModel>(context, listen: true);
 

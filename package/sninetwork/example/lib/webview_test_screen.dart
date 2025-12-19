@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:example/sninetwork_provider.dart';
@@ -27,7 +26,7 @@ class _WebviewTestScreenState extends State<WebviewTestScreen> {
     _initialUri = Uri.parse(widget.url);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _sealerHttpClient =
-          Provider.of<SealerProvider>(context, listen: false).httpClient;
+          Provider.of<SninetworkProvider>(context, listen: false).httpClient;
       setState(() {
         _isSealerReady = true;
       });
@@ -35,7 +34,7 @@ class _WebviewTestScreenState extends State<WebviewTestScreen> {
   }
 
   bool _shouldIntercept(Uri url) {
-    final sealer = Provider.of<SealerProvider>(context, listen: false);
+    final sealer = Provider.of<SninetworkProvider>(context, listen: false);
     return sealer.rules.any((rule) => rule.hosts.any((host) =>
         host == url.host ||
         (host.startsWith('*') && url.host.endsWith(host.substring(1)))));
@@ -144,14 +143,21 @@ class _WebviewTestScreenState extends State<WebviewTestScreen> {
                   print('[WebView-Sealer] Overriding URL loading for: $uri');
                   try {
                     final method = navigationAction.request.method ?? 'GET';
-                    final headers = navigationAction.request.headers?.map((key, value) => MapEntry(key, value.toString())) ?? {};
-                    final request = http.Request(method, uri)..headers.addAll(headers);
-                    final response = await http.Response.fromStream(await _sealerHttpClient.send(request));
+                    final headers = navigationAction.request.headers?.map(
+                            (key, value) => MapEntry(key, value.toString())) ??
+                        {};
+                    final request = http.Request(method, uri)
+                      ..headers.addAll(headers);
+                    final response = await http.Response.fromStream(
+                        await _sealerHttpClient.send(request));
 
                     // FIX 2: Correctly decode the Uint8List to a String for the 'data' parameter.
                     await controller.loadData(
-                      data: utf8.decode(response.bodyBytes, allowMalformed: true),
-                      mimeType: response.headers['content-type']?.split(';').first ?? 'text/html',
+                      data:
+                          utf8.decode(response.bodyBytes, allowMalformed: true),
+                      mimeType:
+                          response.headers['content-type']?.split(';').first ??
+                              'text/html',
                       encoding: 'utf-8',
                       baseUrl: WebUri.uri(uri),
                     );

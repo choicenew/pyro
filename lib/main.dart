@@ -18,6 +18,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:window_manager_plus/window_manager_plus.dart';
 import 'package:path/path.dart' as p;
 
+import 'package:pyro/services/sni_network_service.dart';
 import 'browser.dart';
 
 // ignore: non_constant_identifier_names
@@ -117,6 +118,9 @@ void main(List<String> args) async {
     await Permission.storage.request();
   }
 
+  // Init SNI Network Service
+  await SniNetworkService().init();
+
   runApp(
     MultiProvider(
       providers: [
@@ -131,8 +135,7 @@ void main(List<String> args) async {
             windowModel!.setCurrentWebViewModel(webViewModel);
             return windowModel;
           },
-          create: (BuildContext context) =>
-              WindowModel(id: null),
+          create: (BuildContext context) => WindowModel(id: null),
         ),
       ],
       child: const FlutterBrowserApp(),
@@ -149,34 +152,39 @@ class FlutterBrowserApp extends StatefulWidget {
 
 class _FlutterBrowserAppState extends State<FlutterBrowserApp>
     with WindowListener {
-
   // https://github.com/pichillilorenzo/window_manager_plus/issues/5
   late final AppLifecycleListener? _appLifecycleListener;
 
   @override
   void initState() {
     super.initState();
-    WindowManagerPlus.current.addListener(this);
+    if (Util.isDesktop()) {
+      WindowManagerPlus.current.addListener(this);
 
-    // https://github.com/pichillilorenzo/window_manager_plus/issues/5
-    if (WindowManagerPlus.current.id > 0 && Platform.isMacOS) {
-      _appLifecycleListener = AppLifecycleListener(
-        onStateChange: _handleStateChange,
-      );
+      // https://github.com/pichillilorenzo/window_manager_plus/issues/5
+      if (WindowManagerPlus.current.id > 0 && Platform.isMacOS) {
+        _appLifecycleListener = AppLifecycleListener(
+          onStateChange: _handleStateChange,
+        );
+      }
     }
   }
 
   void _handleStateChange(AppLifecycleState state) {
     // https://github.com/pichillilorenzo/window_manager_plus/issues/5
-    if (WindowManagerPlus.current.id > 0 && Platform.isMacOS && state == AppLifecycleState.hidden) {
-      SchedulerBinding.instance.handleAppLifecycleStateChanged(
-          AppLifecycleState.inactive);
+    if (WindowManagerPlus.current.id > 0 &&
+        Platform.isMacOS &&
+        state == AppLifecycleState.hidden) {
+      SchedulerBinding.instance
+          .handleAppLifecycleStateChanged(AppLifecycleState.inactive);
     }
   }
 
   @override
   void dispose() {
-    WindowManagerPlus.current.removeListener(this);
+    if (Util.isDesktop()) {
+      WindowManagerPlus.current.removeListener(this);
+    }
     _appLifecycleListener?.dispose();
     super.dispose();
   }
